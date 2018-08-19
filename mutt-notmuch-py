@@ -82,6 +82,7 @@ def main(dest_box, options):
     is_gmail = options.gmail
     filter_path = options.base_path
     history_path = normalize(options.history_path)
+    config = options.notmuch_config
     if history_path and os.path.exists(history_path):
         readline.read_history_file(history_path)
     query = input('Query: ')
@@ -93,7 +94,12 @@ def main(dest_box, options):
 
     empty_dir(dest_box)
 
-    files = command('notmuch search --output=files {}'.format(quote(query))).split('\n')
+    cmd_parts = ['notmuch']
+    if config:
+        cmd_parts += ['--config',normalize(config)]
+    cmd_parts += ['search', '--output=files', quote(query)]
+    print(' '.join(cmd_parts))
+    files = command(' '.join(cmd_parts)).split('\n')
 
     data = defaultdict(list)
     messages = []
@@ -138,6 +144,8 @@ if __name__ == '__main__':
                  help='Only include messages in given base path')
     p.add_option('--history-path', dest='history_path',
                  help='Save/restore query history to given path')
+    p.add_option('--notmuch-config', dest='notmuch_config',
+                 help='Config file to invoke `notmuch` with')
     p.add_option('-v', '--version', dest='version', action='store_true',
                  help='Show version')
     (options, args) = p.parse_args()

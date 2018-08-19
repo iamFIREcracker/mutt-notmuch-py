@@ -31,6 +31,7 @@ Options
 -p [path] Limit search results to files with path in the path name
 --history-path=[path]
           Save/Restore query history to given path
+--notmuch-config=[file] Config file to invoke `notmuch` with
 ```
 
 License
